@@ -56,14 +56,16 @@ end
 
 function k.event.pull(type)
     while true do
-        local event = table.pack(computer.pullSignal(0.1))
-        k.event.push(event)
-        if event[1] == type then return table.unpack(event) end
+        local event = table.pack(computer.pullSignal(0.02))
+        if event ~= nil then
+            k.event.push(event)
+            if event[1] == type then return table.unpack(event) end
+        end
     end
 end
 
 function k.event.tick()
-    local event = table.pack(computer.pullSignal(0.1))
+    local event = table.pack(computer.pullSignal(0.02))
     k.event.push(event)
 end
 

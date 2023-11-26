@@ -60,6 +60,7 @@ provider.files["/"] = {
 }
 
 --#include "drivers/fs/procfs_event.lua"
+--#include "drivers/fs/procfs_signals.lua"
 
 local function path_to_node(path, narrow)
     local segments = k.split_path(path)
@@ -184,7 +185,7 @@ function provider:close(fd)
     fd.closed = true
 end
 
-function provider.ioctl(fd, method, ...)
+function provider:ioctl(fd, method, ...)
     checkArg(1, fd, "table")
     checkArg(2, method, "string")
 

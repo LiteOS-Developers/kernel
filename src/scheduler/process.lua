@@ -18,6 +18,22 @@
 
 k.printk(k.L_INFO, "scheduler/process")
 
+local sigtonum = {
+    SIGEXIST  = 0,
+    SIGHUP    = 1,
+    SIGINT    = 2,
+    SIGQUIT   = 3,
+    SIGKILL   = 9,
+    SIGPIPE   = 13,
+    SIGTERM   = 15,
+    SIGCHLD   = 17,
+    SIGCONT   = 18,
+    SIGSTOP   = 19,
+    SIGTSTP   = 20,
+    SIGTTIN   = 21,
+    SIGTTOU   = 22
+}
+
 local process = {}
 
 local default_parent = {
@@ -51,7 +67,6 @@ function process:resume(sig, ...)
     end
     
     if self.stopped then 
-        k.printk(k.L_NOTICE, "STOPPED")
         return
     end
 
@@ -112,6 +127,10 @@ k.default_signal_handlers = setmetatable({
         p.stopped = true
     end,
 
+    SIGTERM = function(p)
+        p.stopped = true
+    end,
+
     SIGSTOP = function(p)
         p.stopped = true
     end,
@@ -142,11 +161,11 @@ k.default_signal_handlers = setmetatable({
 
 function process:signal(sig, imm)
     if self.signal_handlers[sig] then
-        printk(k.L_DEBUG, "%d: using custom signal handler for %s", self.pid, sig)
+        k.printk(k.L_DEBUG, "%d: using custom signal handler for %s", self.pid, sig)
         pcall(self.signal_handlers[sig], sigtonum[sig])
 
     else
-        printk(k.L_DEBUG, "%d: using default signal handler for %s", self.pid, sig)
+        k.printk(k.L_DEBUG, "%d: using default signal handler for %s", self.pid, sig)
         pcall(k.default_signal_handlers[sig], self)
     end
 

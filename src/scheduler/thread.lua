@@ -125,7 +125,6 @@ function thread:resume(sig, ...)
         self.deadline = computer.uptime() + result[1]
         self.status = "w"
     else
-        k.printk(k.L_DEBUG, "Yield Result: %s", dump(result))
         self.deadline = math.huge
         self.status = "w"
     end

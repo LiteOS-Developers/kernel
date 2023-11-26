@@ -28,7 +28,8 @@ function k.add_process()
 end
 
 function k.get_process(rpid)
-    checkArg(1, rpid, "number")
+    checkArg(1, rpid, "number", "nil")
+    if rpid == nil then return processes end
     return processes[rpid]
 end
 
@@ -73,8 +74,8 @@ local default = {n = 0}
 function k.scheduler_loop()
     local last_yield = 0
     local last_time = os.time()
-    while processes[1] do
-        k.pullSignal(0.05)
+    while not (processes[1] or {stopped = true}).stopped do
+        k.pullSignal(0.01)
         local deadline = math.huge
         for _, process in pairs(processes) do
             local proc_deadline = process:deadline()
