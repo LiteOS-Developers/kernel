@@ -1,4 +1,6 @@
 --#include "drivers/filesystems.lua"
 --#include "drivers/fs/main.lua"
---#include "drivers/vcomponent.lua"
+-- #include "drivers/vcomponent.lua"
+--#if def module_rootfs
 --#include "drivers/rootfs.lua"
+-- #endif

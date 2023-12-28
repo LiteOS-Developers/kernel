@@ -351,11 +351,14 @@ function k.syscalls.mknod(path, type_)
     checkArg(2, type_, "string")
     checkArg(3, addr, "string", "nil")
 
-    local stat = k.stat(path)
+    local stat, e = k.stat(path)
     if stat then return nil, k.errno.EEXIST end
     if path:sub(1, ("/dev/"):len()) ~= "/dev/" then return nil, k.errno.EINVAL end
 
-    local stat = k.stat("/dev")
+    local stat, e = k.stat("/dev")
+    if not stat then
+        k.printk(k.L_EMERG, "No /dev: %d", e)
+    end
     if not k.process_has_permission(cur_proc(), stat, "w") then
         return nil, k.errno.EPERM
     end

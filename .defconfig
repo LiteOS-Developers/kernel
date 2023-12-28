@@ -1,0 +1,10 @@
+enableModules = "y"
+
+[config]
+MODULE_BASE="\"/lib/modules\""
+
+[modules]
+rootfs="n"
+managedfs="n"
+procfs="n"
+devfs="n"

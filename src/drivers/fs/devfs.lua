@@ -1,6 +1,3 @@
---#ifndef UUID
---#error UUID is not loaded
---#endif
 --#define DRV_DEVFS
 k.printk(k.L_INFO, "drivers/fs/devfs")
 k.devfs = {}
