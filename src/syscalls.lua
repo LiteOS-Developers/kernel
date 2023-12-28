@@ -72,7 +72,7 @@ function k.syscalls.exit(status)
     current.status = status
     current.threads = {}
     current.thread_count = 0
-    current.is_dead = true 
+    current.is_dead = true
     current.env.coroutine.yield(0.5)
 end
 
@@ -211,9 +211,9 @@ function k.syscalls.read(fd, c)
     return k.read(fd, c)
 end
 function k.syscalls.seek(fd, off, whe)
-    checkArg(1, fd, "number")
+    checkArg(1, fd, "table")
     checkArg(2, off, "number")
-    checkArg(2, whe, "string")
+    checkArg(3, whe, "string")
     return k.seek(fd, off, whe)
 end
 function k.syscalls.close(fd)

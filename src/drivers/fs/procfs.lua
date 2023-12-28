@@ -140,6 +140,7 @@ function provider:list(path)
 end
 
 function provider:exists(path)
+    if path:sub(1,1) == "/" then path = path:sub(2) end
     if provider.files[path] then return true end
     return false
 end

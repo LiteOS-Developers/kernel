@@ -210,7 +210,7 @@ do
         checkArg(1, fd, "table")
         checkArg(2, count, "number")
 
-        return table.unpack(table.pack(self.fs.read(fd, count)))
+        return self.fs.read(fd, count)
     end
     function provider:write(fd, buf)
         checkArg(1, fd, "table")

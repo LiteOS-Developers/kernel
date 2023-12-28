@@ -193,7 +193,6 @@ function k.open(file, mode)
     
     local stat, err
     if not exists and (not modes.w and not modes.a) then
-        k.printf("enoent %s\n", file)
         return nil, k.errno.ENOENT
     elseif not exists and table.contains({"w", "a"}, mode) then
         stat, err = node:stat(dir)
