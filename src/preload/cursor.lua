@@ -42,7 +42,7 @@ k.cursor.getWidth = function(self)
     return self.width
 end
 k.cursor.getHeight = function(self)
-    return self.heigth
+    return self.height
 end
 
 k.cursor.move = function(self, x, y)

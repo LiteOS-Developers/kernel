@@ -43,11 +43,14 @@ function k.parse_ansi_line(v)
                 -- decPos = {x = x, y = y}
             elseif v:sub(i,i+1) == " 8" then
                 i = i + 2
-                k.printf("restore\n\n%s", dump(decPos))
+                -- k.printf("restore\n\n%s", dump(decPos))
                 current_part = {
                     line = decPos.x,
                     column = decPos.y
                 }
+            elseif v:sub(i, i+2) == "[2J" then
+                i = i + 3
+                current_part = {cmd="clear_screen"}
             elseif v:sub(i,i) == "[" and v:sub(i+1,i+1):match("[0-9]") then
                 i = i + 1
                 local line = ""
@@ -59,7 +62,6 @@ function k.parse_ansi_line(v)
                 end
                 if char ~= ";" then return nil, string.format("Missing ';' in ANSI. Location %d", i) end
                 i = i + 1
-                k.printf("line;column\n")
                 local column = ""
                 local char = v:sub(i,i)
                 while char:match("[0-9]") do
@@ -75,7 +77,8 @@ function k.parse_ansi_line(v)
                     line = line,
                     column = column
                 }
-                
+            
+
             elseif v:sub(i,i) == "[" then
                 i = i + 1
                 char = v:sub(i,i)

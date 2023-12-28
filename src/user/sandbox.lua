@@ -74,15 +74,16 @@ k.sandbox.new = function(opts)
                         gpu.setBackground(part.background, true)
                     end
                     if part.line then
-                        k.printf("cursor move line\n")
                         k.cursor:move(part.line, nil)
                     end
                     if part.column then
-                        k.printf("cursor move column\n")
                         k.cursor:move(nil, part.column)
                     end
                     if part.cmd == "store_dec" then
                         part.func(k.cursor:getX(), k.cursor:getY())
+                    end
+                    if part.cmd == "clear_screen" then
+                        gpu.fill(1, 1, k.cursor:getWidth(), k.cursor:getHeight(), " ")
                     end
                     if part.content then
                         k.printf("%s", part.content)
