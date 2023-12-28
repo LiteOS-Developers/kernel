@@ -73,6 +73,7 @@ function k.syscalls.exit(status)
     current.threads = {}
     current.thread_count = 0
     current.is_dead = true 
+    current.env.coroutine.yield(0.5)
 end
 
 function k.syscalls.getSession(sid)
