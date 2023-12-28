@@ -65,13 +65,24 @@ k.sandbox.new = function(opts)
         for idx, parts in ipairs(m) do
             for i, part in ipairs(parts) do
                 if #table.keys(part) ~= 0 then
-                    --k.printf("%s\n", dump(part))
+                    -- k.printf("%s\n", dump(part))
                     --[[]]
                     if part.foreground and part.foreground <= 9 then
                         gpu.setForeground(part.foreground, true)
                     end
                     if part.background and part.background <= 9 then
                         gpu.setBackground(part.background, true)
+                    end
+                    if part.line then
+                        k.printf("cursor move line\n")
+                        k.cursor:move(part.line, nil)
+                    end
+                    if part.column then
+                        k.printf("cursor move column\n")
+                        k.cursor:move(nil, part.column)
+                    end
+                    if part.cmd == "store_dec" then
+                        part.func(k.cursor:getX(), k.cursor:getY())
                     end
                     if part.content then
                         k.printf("%s", part.content)
@@ -94,6 +105,7 @@ k.sandbox.new = function(opts)
 
     new.package = new.dofile("/lib/package.lua")
     new.package.loaded["package"] = new.package
+    new.package.loaded["buffer"] = k.buffer
     new.require = new.package.load
 
     new.computer = {

@@ -18,6 +18,12 @@
 
 k.printk(k.L_INFO, "lib/ansi")
 
+local decPos = {x = 1, y = 1}
+
+function k.store_dec(x, y)
+    decPos = {x = x, y = y}
+end
+
 function k.parse_ansi_line(v)
     checkArg(1, v, "string")
     local parts = {}
@@ -28,7 +34,49 @@ function k.parse_ansi_line(v)
             parts[#parts + 1] = deepcopy(current_part)
             current_part = {}
             i = i + 1
-            if v:sub(i,i) == "[" then
+            if v:sub(i,i+1) == " 7" then
+                i = i + 2
+                current_part = {
+                    cmd = "store_dec",
+                    func = k.store_dec
+                }
+                -- decPos = {x = x, y = y}
+            elseif v:sub(i,i+1) == " 8" then
+                i = i + 2
+                k.printf("restore\n\n%s", dump(decPos))
+                current_part = {
+                    line = decPos.x,
+                    column = decPos.y
+                }
+            elseif v:sub(i,i) == "[" and v:sub(i+1,i+1):match("[0-9]") then
+                i = i + 1
+                local line = ""
+                local char = v:sub(i,i)
+                while char:match("[0-9]") do
+                    line = line .. char
+                    i = i + 1
+                    char = v:sub(i,i)
+                end
+                if char ~= ";" then return nil, string.format("Missing ';' in ANSI. Location %d", i) end
+                i = i + 1
+                k.printf("line;column\n")
+                local column = ""
+                local char = v:sub(i,i)
+                while char:match("[0-9]") do
+                    column = column .. char
+                    i = i + 1
+                    char = v:sub(i,i)
+                end
+                if v:sub(i,i) ~= "H" then return nil, string.format("Missing 'H' in ANSI. Location %d", i) end
+                i = i + 1
+                local line = tonumber(line)
+                local column = tonumber(column)
+                current_part = {
+                    line = line,
+                    column = column
+                }
+                
+            elseif v:sub(i,i) == "[" then
                 i = i + 1
                 char = v:sub(i,i)
                 if char == "1" then
