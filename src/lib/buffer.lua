@@ -88,26 +88,10 @@ function k.buffer:lines()
         return nil, k.errno.EBADFD
     end
     self:flush()
-    local data = ""
-    local buf, e
-    repeat
-        local buf, e = self.stream:read(math.max(1, self.bufferSize))
-        if not buf and e then
-            return nil, e
-        end
-        data = data .. (buf or "")
-    until buf
-    local lines = {}
-    for _, l in data:gmatch("[^\n]+") do
-        table.insert(lines, l)
+    
+    return function()
+        return self:read("l")
     end
-    local index = 0
-    return setmetatable(lines, {
-        __call = function()
-            index = index + 1
-            return lines[index]
-        end
-    })
 end
 
 function k.buffer:read(v)
@@ -122,7 +106,7 @@ function k.buffer:read(v)
     if v == "l" then
         return self:readLine(true)
     else
-        return self.stream:read()
+        return self.stream:read(v)
     end
 end
 
@@ -133,38 +117,36 @@ function k.buffer:readLine(chop)
     if not self.mode.r then
         return nil, k.errno.EBADFD
     end
+    self:flush()
     local start = 1
-    if self.mode == "full" or self.mode == "line" then
-        while true do
-            local buf = self.bufferRead
-            local i = buf:find("[\r\n]", start)
-            local c = i and buf:sub(i,i)
-            local is_cr = c == "\r"
-            if i and (not is_cr or i < #buf) then
-                local n = buf:sub(i+1,i+1)
-                if is_cr and n == "\n" then
-                    c = c .. n
-                end
-                local result = buf:sub(1, i - 1) .. (chop and "" or c)
-                self.bufferRead = buf:sub(i + #c)
-                return result
-            else
-                start = #self.bufferRead - (is_cr and 1 or 0)
-                local result, reason = readChunk(self)
-                if not result then
-                    if reason then
-                        return result, reason
-                    else -- eof
-                        result = #self.bufferRead > 0 and self.bufferRead or nil
-                        self.bufferRead = ""
-                        return result
-                    end
+    if self.bufferMode == "full" or self.bufferMode == "line" then
+        local nl
+        if self.bufferRead:len() == 0 then
+            self.bufferRead = self.stream:read()
+        end
+        if not self.bufferRead then
+            self.bufferRead = ""
+            return nil
+        end
+        repeat
+            nl = self.bufferRead:find("[\r\n]", 0)
+            if nl == nil then
+                local result = self.stream:read()
+                if not result then nl = self.bufferRead:len()
+                else 
+                    self.bufferRead = self.bufferRead .. result
                 end
             end
-        end 
-    else
-        local data = self.stream:read()
-        return data:match("([^\n]+)")
+        until nl
+        local nextLineStart = nl + 1
+        if chop then
+            nl = nl - 1
+
+        end
+        buf = self.bufferRead:sub(1, nl)
+        self.bufferRead = self.bufferRead:sub(nl + 2)
+        self.stream:seek(nextLineStart, "set")
+        return buf
     end
 end
 
@@ -172,7 +154,7 @@ function k.buffer:seek(offset, whence)
     checkArg(1, offset, "number")
     assert(math.floor(offset) == offset, "bad argument #1 (not an integer)")
 
-    tostring(whence or "cur")
+    whence = tostring(whence or "set")
     assert(whence == "set" or whence == "cur" or whence == "end",
     "bad argument #2 (set, cur or end expected, got " .. whence .. ")")
 
