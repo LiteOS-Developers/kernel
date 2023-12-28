@@ -1,5 +1,4 @@
 local debugfd
-local bootfs = component.proxy(computer.getBootAddress())
 
 function k.debug_init()
 --#ifdef DEBUG_ENABLED 

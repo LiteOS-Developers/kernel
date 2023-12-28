@@ -1,7 +1,8 @@
-enableModules = "y"
+enableModules = "n"
 
 [config]
 MODULE_BASE="\"/lib/modules\""
+ENABLE_DEBUG="n"
 
 [modules]
 rootfs="n"
