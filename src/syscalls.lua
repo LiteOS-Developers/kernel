@@ -49,6 +49,7 @@ function k.syscalls.getegid()
 end
 
 k.syscalls.mount = k.mount
+k.syscalls.mounts = k.mounts
 
 function k.syscalls.exit(status)
     checkArg(1, status, "number")

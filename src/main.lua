@@ -26,6 +26,7 @@ k.hlt = function()
 end
 --#include "libstd.lua"
 --#include "preload/main.lua"
+--#include "modules.lua"
 --#include "errno.lua"
 --#include "event.lua"
 --#include "uuid.lua"

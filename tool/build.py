@@ -27,7 +27,7 @@ modules = {
 proc = PreProcessor(BUILD_FILE, OUTFILE, {})
 
 for key, value in data.get("config", {}).items():
-    proc.defines[key] = value
+    proc.defines[key] = True if value == "y" else value
 
 if data.get("enableModules") == "y":
     proc.defines["modules"] = True
@@ -38,7 +38,7 @@ if data.get("enableModules") == "y":
             modules[device][0] = True
 
 cwd = os.getcwd()
-# print(proc.defines)
+print(proc.defines)
 os.chdir(os.path.dirname(BUILD_FILE))
 proc.process()
 
