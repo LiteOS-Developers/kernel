@@ -130,6 +130,7 @@ function provider:du()
 end
 
 function provider:list(path)
+    k.printf(path .. "\n")
     if provider.files[path] and provider.files[path].list then return provider.files[path].list() end
     return { 
         

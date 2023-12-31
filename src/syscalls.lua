@@ -247,7 +247,7 @@ function k.syscalls.rename(from, to)
 end
 function k.syscalls.list(path)
     checkArg(1, path, "string")
-    return k.list(path)
+    return table.unpack({k.list(path)})
 end
 function k.syscalls.lastModified(path)
     checkArg(1, path, "string")
