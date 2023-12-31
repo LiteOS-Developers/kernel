@@ -38,7 +38,7 @@ if data.get("enableModules") == "y":
             modules[device][0] = True
 
 cwd = os.getcwd()
-print(proc.defines)
+# print(proc.defines)
 os.chdir(os.path.dirname(BUILD_FILE))
 proc.process()
 
